@@ -4,27 +4,47 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    private Rigidbody2D rb;
+    private SpriteRenderer sprite;
+    private Animator anim;
+    private float dirX = 0f;
+    [SerializeField] private float MoveSpeed = 14f;
+    [SerializeField] private float JumpForce = 7f;
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Hello, world");     
+        rb = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey("space"))
+        dirX = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(dirX * MoveSpeed, rb.velocity.y);
+        if (Input.GetButtonDown("Jump"))
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(0,14,0);
+            rb.velocity = new Vector2(rb.velocity.x, JumpForce);
         }
-        else if (Input.GetKey("right"))
+
+        UpdateAnimation();
+    }
+    private void UpdateAnimation()
+    {
+        if (dirX > 0f)
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(6,0,0);
+            anim.SetBool("Running", true);
+            sprite.flipX = false;
         }
-        else if (Input.GetKey("left"))
+        else if (dirX < 0f)
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector3(-6, 0, 0);
+            anim.SetBool("Running", true);
+            sprite.flipX = true;
+        }
+        else
+        {
+            anim.SetBool("Running", false);
         }
     }
-   
 }
